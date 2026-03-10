@@ -30,8 +30,6 @@ public class StudySession {
     @Column(nullable = false)
     private LocalDateTime startTime;
 
-    // TODO : La validation "endTime après startTime"
-    //  doit être faite dans le service, pas au niveau de l’entité.
     @NotNull(message = "La date de fin est obligatoire")
     @Column(nullable = false)
     private LocalDateTime endTime;
@@ -54,6 +52,10 @@ public class StudySession {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getStudentName() {
