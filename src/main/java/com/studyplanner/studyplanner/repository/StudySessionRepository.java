@@ -12,3 +12,6 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
     long countByStudentName(String studentName);
 
 }
+
+
+// ajouter annotation @Repository

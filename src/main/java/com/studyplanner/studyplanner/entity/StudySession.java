@@ -15,7 +15,6 @@ public class StudySession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Le nom de l'étudiant est obligatoire")
     @Column(nullable = false)
     private String studentName;
 

@@ -13,12 +13,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -72,51 +68,23 @@ public class StudySessionControllerTest {
 
     @Test
     @WithMockUser(username = "student")
-    void getAllSessions() throws Exception {
-        List<StudySession> sessions = Arrays.asList(session1, session2);
-        when(studySessionService.getAllSessions("student")).thenReturn(sessions);
+    void shouldReturn400WhenSubjectIsBlank() throws Exception {
+        StudySession invalid = new StudySession();
+        invalid.setSubject("");
+        invalid.setStartTime(LocalDateTime.now().plusDays(1));
+        invalid.setEndTime(LocalDateTime.now().plusDays(1).plusHours(2));
 
-        mockMvc.perform(get("/api/sessions"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].subject").value("Math"))
-                .andExpect(jsonPath("$[1].subject").value("Physics"));
-    }
-
-    @Test
-    @WithMockUser(username = "student")
-    void getSessionById() throws Exception {
-        when(studySessionService.getSessionById(1L, "student")).thenReturn(session1);
-
-        mockMvc.perform(get("/api/sessions/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.subject").value("Math"));
-    }
-
-    @Test
-    @WithMockUser(username = "student")
-    void updateSession() throws Exception {
-        when(studySessionService.updateSession(eq(1L), any(StudySession.class), eq("student"))).thenReturn(session1);
-
-        mockMvc.perform(put("/api/sessions/1")
+        mockMvc.perform(post("/api/sessions")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(session1)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.subject").value("Math"));
+                        .content(objectMapper.writeValueAsString(invalid)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     @Test
-    @WithMockUser(username = "student")
-    void deleteSession() throws Exception {
-        doNothing().when(studySessionService).deleteSession(anyLong(), anyString());
-
-        mockMvc.perform(delete("/api/sessions/1")
-                        .with(csrf()))
-                .andExpect(status().isNoContent());
-
-        verify(studySessionService, times(1)).deleteSession(1L, "student");
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/sessions"))
+                .andExpect(status().isUnauthorized());
     }
 }

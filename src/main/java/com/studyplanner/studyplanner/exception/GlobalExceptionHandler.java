@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error -> erreurs.put(error.getField(), error.getDefaultMessage()));
 
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Erreur de validation",
+                "VALIDATION_ERROR",
+                "Erreur de validation des données",
                 erreurs,
                 LocalDateTime.now()
         );
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex) {
         return new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                "NOT_FOUND",
                 ex.getMessage(),
                 null,
                 LocalDateTime.now()
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleBusinessException(BusinessException ex) {
         return new ErrorResponse(
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "BUSINESS_ERROR",
                 ex.getMessage(),
                 null,
                 LocalDateTime.now()
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenericException(Exception ex) {
         return new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL_ERROR",
                 "Une erreur interne du serveur s'est produite",
                 null,
                 LocalDateTime.now()
