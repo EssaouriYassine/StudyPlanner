@@ -17,13 +17,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> erreurs = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> erreurs.put(error.getField(), error.getDefaultMessage()));
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         return new ErrorResponse(
                 "VALIDATION_ERROR",
                 "Erreur de validation des données",
-                erreurs,
+                errors,
                 LocalDateTime.now()
         );
     }
