@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,6 +65,16 @@ class StudySessionServiceTest {
 
         assertThatThrownBy(() -> service.getSessionById(99L, "alice"))
                 .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void shouldReturnAllSessionsForUser() {
+        when(repository.findByStudentName("alice")).thenReturn(List.of(session));
+
+        List<StudySession> result = service.getAllSessions("alice");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getSubject()).isEqualTo("Java");
     }
 
     @Test
